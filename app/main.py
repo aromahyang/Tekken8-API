@@ -8,23 +8,27 @@ app = FastAPI()
 
 
 def convert_notation(data: str):
-    data = data.replace(" ", ",(next),")
-    data = data.replace(":", ",(colon),")
-    data = data.replace("*", ",(hold),")
-    data = data.replace("<", ",(delay1),")
-    data = data.replace(">", ",(delay2),")
+    # Replace symbols with words
+    data = data.replace(" ", "(next)")
+    data = data.replace(":", "(colon)")
+    data = data.replace("*", "(hold)")
+    data = data.replace("<", "(delay1)")
+    data = data.replace(">", "(delay2)")
+
+    # Convert capital letters to the format ^lowercase
     data = re.sub(r"([A-Z])", lambda match: f"^{match.group(1).lower()}", data)
     return data
 
 
 def draw_notation(notation: list):
     images = []
-    for file_name in notation:
+    for raw in notation:
         try:
-            img = Image.open(f"./app/public/button/{file_name}.png")
+            processed = convert_notation(raw)
+            img = Image.open(f"./app/public/button/{processed}.png")
             images.append(img)
         except FileNotFoundError:
-            return {"error": f"Notation '{file_name}'."}
+            return {"error": f"Notation '{raw}' not found."}
     if not images:
         return {"error": "No images to merge."}
 
@@ -42,11 +46,10 @@ def draw_notation(notation: list):
 
 @app.post("/notation")
 async def notation(data: Notation):
-    n = convert_notation(data.notation)
-    new_image = draw_notation(n.split(","))
-    if isinstance(new_image, dict):
-        return new_image
+    results = draw_notation(data.notation.split(","))
+    if isinstance(results, dict):
+        return results
     img_byte_array = io.BytesIO()
-    new_image.save(img_byte_array, format="JPEG")
+    results.save(img_byte_array, format="JPEG")
     img_byte_array.seek(0)
     return StreamingResponse(img_byte_array, media_type="image/jpeg")
