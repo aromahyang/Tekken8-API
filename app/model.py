@@ -2,5 +2,6 @@ from pydantic import BaseModel
 
 
 class Notation(BaseModel):
-    frame: int
+    character_name: str
+    starter_frame: int
     notation: str
