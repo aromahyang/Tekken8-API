@@ -10,20 +10,26 @@ def convert_moveset(move: str):
 
 async def find_move(character_name: str, notation: str):
     raw_data = await get_movetable(Movetable(character_name=character_name))
+    if "error" in raw_data:
+        return raw_data
     move = ""
     for part in notation.split(" "):
         if re.search(r"\d", part):
             move = part
             break
-    move = convert_moveset(move)
+    converted_move = convert_moveset(move)
     filtered_result = [
         item
         for item in raw_data
-        if item["moveset"] == f"{character_name.capitalize()}-{move}"
+        if item["moveset"] == f"{character_name.capitalize()}-{converted_move}"
     ]
     if filtered_result:
         return filtered_result
-    return {"error": "No matching moveset found."}
+    return {
+        "error": f"No matching moveset found for {move}",
+        "character_name": character_name,
+        "notation": notation,
+    }
 
 
 async def get_movetable(data: Movetable):
@@ -66,6 +72,8 @@ async def get_movetable(data: Movetable):
             for i in range(len(raw["moveset"]))
             if raw["moveset"][i] != "Move"
         ]
+        if not result:
+            return {"error": f"No matching character found for {data.character_name}"}
         if data.notation is not None:
             filtered_result = [
                 item
@@ -76,7 +84,7 @@ async def get_movetable(data: Movetable):
             return (
                 filtered_result[0]
                 if filtered_result[0]
-                else {"error": "No matching moveset found."}
+                else {"error": "No matching moveset found.", "data": result}
             )
         return result
     else:
