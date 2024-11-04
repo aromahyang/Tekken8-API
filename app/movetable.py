@@ -12,25 +12,44 @@ async def find_move(character_name: str, notation: str):
     raw_data = await get_movetable(Movetable(character_name=character_name))
     if "error" in raw_data:
         return raw_data
-    move = ""
-    for part in notation.split(" "):
-        part = part.replace(",", "")
-        if re.search(r"\d", part):
-            move = part
-            break
+
+    move = next((part for part in notation.split(" ") if re.search(r"\d", part)), "")
+    if not move:
+        return {"error": "No move notation found", "character_name": character_name}
     converted_move = convert_moveset(move)
-    filtered_result = [
-        item
-        for item in raw_data
-        if item["moveset"] == f"{character_name.capitalize()}-{converted_move}"
-    ]
-    if filtered_result:
-        return filtered_result
-    return {
-        "error": f"No matching moveset found for {move}",
-        "character_name": character_name,
-        "notation": notation,
-    }
+
+    if "stance" in converted_move:
+        stance = re.search(r"\((.*?)\)", move).group(1)
+        converted_move = converted_move.replace(f"stance({stance})", stance)
+        converted_moves = converted_move.split(",")
+
+        filtered_result = [
+            item
+            for item in raw_data
+            if all(
+                move
+                in item["moveset"]
+                .replace(f"{character_name.capitalize()}-", "")
+                .replace(".", ",")
+                .split(",")
+                for move in converted_moves
+            )
+        ]
+    else:
+        target_moveset = f"{character_name.capitalize()}-{converted_move}"
+        filtered_result = [
+            item for item in raw_data if item["moveset"] == target_moveset
+        ]
+
+    return (
+        filtered_result
+        if filtered_result
+        else {
+            "error": f"No matching moveset found for {move}",
+            "character_name": character_name,
+            "notation": notation,
+        }
+    )
 
 
 async def get_movetable(data: Movetable):
