@@ -18,8 +18,8 @@ def convert_notation(data: str):
     data = data.replace(">", ",'delay2',")
     data = data.replace("WS", ",WS,")
     data = data.replace("~", ",~,")
-    data = data.replace("(", "[,")
-    data = data.replace(")", ",]")
+    data = data.replace("[", "[,")
+    data = data.replace("]", ",]")
     data = data.replace("F!", "FB!")
 
     # Add makro
@@ -36,19 +36,47 @@ def convert_notation(data: str):
 
 
 def draw_character_name(name: str):
-    font = ImageFont.truetype("arial.ttf", 64)
+    font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE")))
     raw_width = len(str(name)) + 2
-    img_size = (int(os.getenv("NAME_TEXT_WIDTH")) * raw_width, 64)
+    img_size = (
+        int(os.getenv("NAME_TEXT_WIDTH")) * raw_width,
+        int(os.getenv("CHAR_NAME_FONT_SIZE")),
+    )
     im = Image.new("RGB", img_size)
     d = ImageDraw.Draw(im)
     d.text((0, 0), f"{name.capitalize()}:", fill="white", font=font)
     return im
 
 
+def draw_stances(name: str):
+    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")) - 4)
+    img_size = (
+        int(font.getlength(" " + name + " ")),
+        int(os.getenv("NOTATION_FONT_SIZE")),
+    )
+    im = Image.new("RGB", img_size)
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle(
+        [0, 0, im.width, im.height],
+        radius=15,
+        fill="white",
+        outline="white",
+    )
+    d.text(
+        (0, -8),
+        f" {name} ",
+        fill="black",
+        font=font,
+        align="center",
+    )
+
+    return im
+
+
 def draw_starter_frame(frame_startup: str):
-    font = ImageFont.truetype("arial.ttf", 128)
-    raw_width = len(frame_startup) + 2
-    img_size = (int(os.getenv("FRAME_TEXT_WIDTH")) * raw_width, 128)
+    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")))
+    raw_width = int(font.getlength(frame_startup + "F "))
+    img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE")))
     im = Image.new("RGB", img_size)
     d = ImageDraw.Draw(im)
     d.text((0, 0), f"{frame_startup}F", fill="white", font=font)
@@ -75,11 +103,20 @@ async def draw_notation(notation: list, data: Notation):
     for raw in notation:
         if raw != "":
             try:
-                img = Image.open(f"./app/public/button/{raw}.png")
+                if "stance" in raw:
+                    stance = re.search(r"\((.*?)\)", raw).group(1)
+                    stance = re.sub(
+                        r"([a-z])", lambda match: f"{match.group(1).upper()}", stance
+                    )
+                    stance = stance.replace("^", "")
+                    img = draw_stances(stance)
+                else:
+                    img = Image.open(f"./app/public/button/{raw}.png")
+
                 img_width, img_height = img.size
                 if current_x + img_width > width_limit:
                     current_x = 0
-                    current_y += max_height_in_row
+                    current_y += max_height_in_row + 10
                     max_height_in_row = img_height
                 else:
                     max_height_in_row = max(max_height_in_row, img_height)

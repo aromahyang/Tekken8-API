@@ -14,6 +14,7 @@ async def find_move(character_name: str, notation: str):
         return raw_data
     move = ""
     for part in notation.split(" "):
+        part = part.replace(",", "")
         if re.search(r"\d", part):
             move = part
             break
