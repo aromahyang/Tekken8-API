@@ -28,6 +28,9 @@ def convert_notation(data: str):
     data = data.replace("hcf", "b,db,d,df,f")
     data = data.replace("hcb", "f,df,d,db,b")
     data = data.replace("dp", "f,d,df")
+    data = data.replace("ewgf", "f,n,d,df,2")
+    data = data.replace("RA", "R")
+    data = data.replace("HB", "2+3,^h")
 
     # Convert capital letters to the format ^lowercase
     data = re.sub(r"([A-Z])", lambda match: f"^{match.group(1).lower()}", data)
@@ -37,14 +40,14 @@ def convert_notation(data: str):
 
 def draw_character_name(name: str):
     font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE")))
-    raw_width = len(str(name)) + 2
+    raw_width = len(name) + 2
     img_size = (
         int(os.getenv("NAME_TEXT_WIDTH")) * raw_width,
-        int(os.getenv("CHAR_NAME_FONT_SIZE")),
+        font.getbbox(name)[3] - font.getbbox(name)[1] + 32,
     )
-    im = Image.new("RGB", img_size)
+    im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
-    d.text((0, 0), f"{name.capitalize()}:", fill="white", font=font)
+    d.text((0, 0), f"{name.title()}:", fill="white", font=font)
     return im
 
 
@@ -54,7 +57,7 @@ def draw_stances(name: str):
         int(font.getlength(" " + name + " ")),
         int(os.getenv("NOTATION_FONT_SIZE")),
     )
-    im = Image.new("RGB", img_size)
+    im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
     d.rounded_rectangle(
         [0, 0, im.width, im.height],
@@ -77,7 +80,7 @@ def draw_starter_frame(frame_startup: str):
     font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")))
     raw_width = int(font.getlength(frame_startup + "F "))
     img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE")))
-    im = Image.new("RGB", img_size)
+    im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
     d.text((0, 0), f"{frame_startup}F", fill="white", font=font)
     return im
@@ -111,7 +114,7 @@ async def draw_notation(notation: list, data: Notation):
                     stance = stance.replace("^", "")
                     img = draw_stances(stance)
                 else:
-                    img = Image.open(f"./app/public/button/{raw}.png")
+                    img = Image.open(f"./app/public/button/{raw}.png").convert("RGBA")
 
                 img_width, img_height = img.size
                 if current_x + img_width > width_limit:
@@ -131,7 +134,7 @@ async def draw_notation(notation: list, data: Notation):
     new_width = width_limit
     new_height = current_y + max_height_in_row
 
-    new_image = Image.new("RGB", (new_width, new_height))
+    new_image = Image.new("RGBA", (new_width, new_height))
     for img, position in images:
         new_image.paste(img, position)
 
@@ -139,6 +142,8 @@ async def draw_notation(notation: list, data: Notation):
 
 
 async def get_img_notation(data: Notation):
+    if data.character_name == "DVJ" or data.character_name == "dvj":
+        data.character_name = "Devil Jin"
     converted = convert_notation(data.notation)
     img_notation = await draw_notation(converted.split(","), data)
     if isinstance(img_notation, dict):
@@ -147,7 +152,7 @@ async def get_img_notation(data: Notation):
     p = 5
     img_chara_name = draw_character_name(data.character_name)
     results = Image.new(
-        "RGB",
+        "RGBA",
         (
             img_notation.width,
             img_notation.height + img_chara_name.height + p,

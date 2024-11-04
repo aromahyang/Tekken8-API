@@ -26,6 +26,6 @@ async def notation(data: Notation):
     if isinstance(notation_img, dict):
         return notation_img
     img_byte_array = io.BytesIO()
-    notation_img.save(img_byte_array, format="JPEG")
+    notation_img.save(img_byte_array, format="PNG")
     img_byte_array.seek(0)
-    return StreamingResponse(img_byte_array, media_type="image/jpeg")
+    return StreamingResponse(img_byte_array, media_type="image/png")
