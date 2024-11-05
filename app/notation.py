@@ -7,7 +7,8 @@ import re, os
 load_dotenv()
 
 
-def convert_notation(data: str):
+# For drawing notation
+def convert_notation(data: str) -> str:
     # Replace symbols with words
     data = data.replace("/", "")
     data = data.replace(" ", ",'next',")
@@ -34,15 +35,16 @@ def convert_notation(data: str):
 
     # Convert capital letters to the format ^lowercase
     data = re.sub(r"([A-Z])", lambda match: f"^{match.group(1).lower()}", data)
+    # Convert plus symbol (+) to comma (,)
     data = re.sub(r"([a-zA-Z]+)\+(\d+)", r"\1,\2", data)
     return data
 
 
-def draw_character_name(name: str):
+def draw_character_name(name: str) -> Image:
     font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE")))
     raw_width = len(name) + 2
     img_size = (
-        int(os.getenv("NAME_TEXT_WIDTH")) * raw_width,
+        int(os.getenv("CHAR_NAME_FONT_SIZE")) * raw_width,
         font.getbbox(name)[3] - font.getbbox(name)[1] + 32,
     )
     im = Image.new("RGBA", img_size)
@@ -51,7 +53,7 @@ def draw_character_name(name: str):
     return im
 
 
-def draw_stances(name: str):
+def draw_stances(name: str) -> Image:
     font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")) - 4)
     img_size = (
         int(font.getlength(" " + name + " ")),
@@ -76,7 +78,7 @@ def draw_stances(name: str):
     return im
 
 
-def draw_starter_frame(frame_startup: str):
+def draw_starter_frame(frame_startup: str) -> Image:
     font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")))
     raw_width = int(font.getlength(frame_startup + "F "))
     img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE")))
@@ -95,8 +97,10 @@ async def draw_notation(notation: list, data: Notation):
 
     moveset = await find_move(data.character_name, data.notation)
     if "error" in moveset:
+        # Using ??F if starter frame not found
         starter_frame = "??"
     else:
+        # Using starter frame that found
         frame = re.findall(r"\d+", moveset[0]["startup"])
         starter_frame = f"{frame[0]}~{frame[1]}" if len(frame) > 1 else frame[0]
     img_frame = draw_starter_frame(starter_frame)
@@ -107,16 +111,20 @@ async def draw_notation(notation: list, data: Notation):
         if raw != "":
             try:
                 if "stance" in raw:
+                    # Get value inside parentheses in "stance(...)" and store that value
                     stance = re.search(r"\((.*?)\)", raw).group(1)
+                    # Convert stance to uppercase
                     stance = re.sub(
                         r"([a-z])", lambda match: f"{match.group(1).upper()}", stance
                     )
+                    # Removing symbol "^"
                     stance = stance.replace("^", "")
                     img = draw_stances(stance)
                 else:
                     img = Image.open(f"./app/public/button/{raw}.png").convert("RGBA")
 
                 img_width, img_height = img.size
+                # Using for checking if image not greater than IMAGE_NOTATION_WIDTH_LIMIT
                 if current_x + img_width > width_limit:
                     current_x = 0
                     current_y += max_height_in_row + 10
@@ -131,9 +139,10 @@ async def draw_notation(notation: list, data: Notation):
 
     if not images:
         return {"error": "No images to merge."}
+
+    # Paste the img that append in images[] variabel
     new_width = width_limit
     new_height = current_y + max_height_in_row
-
     new_image = Image.new("RGBA", (new_width, new_height))
     for img, position in images:
         new_image.paste(img, position)
@@ -142,8 +151,10 @@ async def draw_notation(notation: list, data: Notation):
 
 
 async def get_img_notation(data: Notation):
+    # Makro for character name
     if data.character_name == "DVJ" or data.character_name == "dvj":
         data.character_name = "Devil Jin"
+
     converted = convert_notation(data.notation)
     img_notation = await draw_notation(converted.split(","), data)
     if isinstance(img_notation, dict):

@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Notation(BaseModel):
-    character_name: str | None = None
+    character_name: str
     notation: str
 
 
