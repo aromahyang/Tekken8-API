@@ -52,7 +52,7 @@ POST /notation
     "notation": "b,B+4 dash b,3,3 f,4:1 b,1:1+2"
 }
 ```
-![Notation Maker Example](public/example/response.png)
+![Notation Maker Example](app/public/example/response.png)
 
 #### Get movetable:
 ```http
