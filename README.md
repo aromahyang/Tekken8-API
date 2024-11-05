@@ -20,7 +20,7 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `character_name` | `string` | *Character Name of Tekken 8 |
 | `notation` | `string` | *Your notation |
 
-#### Get item
+#### Find moveset
 
 ```http
   POST /findmove
@@ -31,7 +31,7 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `character_name`      | `string` | *Character Name of Tekken 8 |
 | `notation` | `string` | Notation to find |
 
-#### Get item
+#### Get moveset
 
 ```http
   POST /movetable
