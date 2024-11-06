@@ -7,6 +7,7 @@ import requests, re
 # Converting for searching moveset
 def convert_moveset(move: str):
     move = move.replace("WR", "f,f,F+")
+    move = move.replace("wr", "f,f,F+")
     move = move.replace("WS", "ws")
     move = move.replace("ewgf", "f,n,d,df+2")
     move = move.replace("RA", "R.df+1+2")
