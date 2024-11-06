@@ -1,9 +1,9 @@
 from bs4 import BeautifulSoup
-from .model import Movetable
+from .model import Movetable, Findmove
 import requests, re
 
 
-# For searching moveset
+# Converting for searching moveset
 def convert_moveset(move: str):
     move = move.replace("WS", "ws")
     move = move.replace("ewgf", "f,n,d,df+2")
@@ -11,7 +11,32 @@ def convert_moveset(move: str):
     return move
 
 
-async def find_move(character_name: str, notation: str):
+async def finding_move(param: Findmove):
+    data = await get_movetable(Findmove(character_name=param.character_name))
+    # Apply filters based on the existence of notation and movename parameters
+    filtered_result = [
+        item
+        for item in data
+        if (
+            (
+                param.notation is None
+                or item["moveset"] == f"{param.character_name.title()}-{param.notation}"
+            )
+            and (
+                param.name_move is None or item["name_move"] == param.name_move.title()
+            )
+        )
+    ]
+
+    # Return the first match if available, otherwise return an error message
+    return (
+        filtered_result
+        if filtered_result
+        else {"error": "No matching moveset found", "data": param}
+    )
+
+
+async def get_starter_frame(character_name: str, notation: str):
     # Makro for character name
     if character_name == "DVJ" or character_name == "dvj":
         character_name = "Devil Jin"
@@ -91,6 +116,7 @@ async def get_movetable(data: Movetable):
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, "html.parser")
 
+        # Get raw data
         def get_data(classname: str):
             raw = soup.find_all(class_=classname)
             result = [data.get_text(strip=True) for data in raw]
@@ -108,6 +134,7 @@ async def get_movetable(data: Movetable):
             "states": get_data("field_States"),
             "notes": get_data("field_Notes"),
         }
+        # Process raw data
         result = [
             {
                 "moveset": raw["moveset"][i],
@@ -126,18 +153,6 @@ async def get_movetable(data: Movetable):
         ]
         if not result:
             return {"error": f"No matching character found for {data.character_name}"}
-
-        if data.notation is not None:
-            filtered_result = [
-                item
-                for item in result
-                if item["moveset"] == f"{data.character_name.title()}-{data.notation}"
-            ]
-            return (
-                filtered_result[0]
-                if filtered_result[0]
-                else {"error": "No matching moveset found.", "data": result}
-            )
         return result
     else:
         return {"error": "error while getting frame data"}
