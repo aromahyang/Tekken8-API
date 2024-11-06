@@ -29,9 +29,12 @@ def convert_notation(data: str) -> str:
     data = data.replace("hcf", "b,db,d,df,f")
     data = data.replace("hcb", "f,df,d,db,b")
     data = data.replace("dp", "f,d,df")
-    data = data.replace("ewgf", "f,n,d,df,2")
     data = data.replace("RA", "R")
+    data = data.replace("ewgf", "f,n,d,df,2")
+    data = data.replace("EWGF", "f,n,d,df,2")
     data = data.replace("HB", "2+3,^h")
+    data = data.replace("HS", "^h,2+3")
+    data = data.replace("WR", "f,f,F")
 
     # Convert capital letters to the format ^lowercase
     data = re.sub(r"([A-Z])", lambda match: f"^{match.group(1).lower()}", data)
@@ -41,7 +44,9 @@ def convert_notation(data: str) -> str:
 
 
 def draw_character_name(name: str) -> Image:
-    font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE", 64)))
+    font = ImageFont.truetype(
+        "./public/arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE", 64))
+    )
     raw_width = len(name) + 2
     img_size = (
         int(os.getenv("CHAR_NAME_FONT_SIZE", 64)) * raw_width,
@@ -55,7 +60,7 @@ def draw_character_name(name: str) -> Image:
 
 def draw_stances(name: str) -> Image:
     font = ImageFont.truetype(
-        "arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128)) - 4
+        "./public/arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128)) - 4
     )
     img_size = (
         int(font.getlength(" " + name + " ")),
@@ -81,7 +86,9 @@ def draw_stances(name: str) -> Image:
 
 
 def draw_starter_frame(frame_startup: str) -> Image:
-    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128)))
+    font = ImageFont.truetype(
+        "./public/arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128))
+    )
     raw_width = int(font.getlength(frame_startup + "F "))
     img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE", 128)))
     im = Image.new("RGBA", img_size)

@@ -4,6 +4,12 @@ FROM python:3.12
 # Set working directory
 WORKDIR /app
 
+# Install Pillow dependencies
+RUN apt-get update && apt-get install -y fonts-dejavu
+
+# Copy font into the container
+COPY app/public/arial.ttf /usr/share/fonts/truetype/arial.ttf
+
 # Environment variables
 ENV CHAR_NAME_FONT_SIZE=64 \
     NOTATION_FONT_SIZE=128 \
