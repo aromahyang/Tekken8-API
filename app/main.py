@@ -1,22 +1,22 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
-from .model import Notation, Movetable
+from .model import Notation, Movetable, Findmove
 from .notation import get_img_notation
-from .movetable import get_movetable, find_move
+from .movetable import get_movetable, finding_move
 import io
 
 app = FastAPI()
 
 
-@app.post("/findmove")
-async def movetable(data: Movetable):
-    result = await find_move(character_name=data.character_name, notation=data.notation)
-    return {"total_data": len(result), "data": result}
-
-
 @app.post("/movetable")
 async def movetable(data: Movetable):
     result = await get_movetable(data)
+    return {"total_data": len(result), "data": result}
+
+
+@app.post("/findmove")
+async def findmove(data: Findmove):
+    result = await finding_move(data)
     return {"total_data": len(result), "data": result}
 
 

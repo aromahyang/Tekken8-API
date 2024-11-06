@@ -1,13 +1,13 @@
 from PIL import Image, ImageFont, ImageDraw
 from dotenv import load_dotenv
 from .model import Notation
-from .movetable import find_move
+from .movetable import get_starter_frame
 import re, os
 
 load_dotenv()
 
 
-# For drawing notation
+# Converting for drawing notation
 def convert_notation(data: str) -> str:
     # Replace symbols with words
     data = data.replace("/", "")
@@ -95,7 +95,7 @@ async def draw_notation(notation: list, data: Notation):
     current_y = 0
     max_height_in_row = 0
 
-    moveset = await find_move(data.character_name, data.notation)
+    moveset = await get_starter_frame(data.character_name, data.notation)
     if "error" in moveset:
         # Using ??F if starter frame not found
         starter_frame = "??"

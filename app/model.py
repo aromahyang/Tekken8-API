@@ -8,4 +8,9 @@ class Notation(BaseModel):
 
 class Movetable(BaseModel):
     character_name: str
-    notation: str | None = None
+
+
+class Findmove(BaseModel):
+    character_name: str
+    notation: str | None = ""
+    name_move: str | None = ""
