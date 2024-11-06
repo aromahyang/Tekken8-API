@@ -196,6 +196,14 @@ POST /findmove
 }
 ```
 
+```http
+POST /findmove
+{
+    "character_name": "claudio",
+    "name_move": "jab"
+}
+```
+
 Output will be:
 
 ```json

@@ -16,35 +16,23 @@ def convert_moveset(move: str):
 
 async def finding_move(param: Findmove):
     data = await get_movetable(Findmove(character_name=param.character_name))
-    # If notation is provided, find close matches in "moveset"
+    param.notation = convert_moveset(param.notation)
+
+    # If notation is provided, perform an exact match on "moveset"
     if param.notation:
         notation_target = f"{param.character_name.title()}-{param.notation}"
-        moveset_matches = get_close_matches(
-            notation_target, [item["moveset"] for item in data], n=1, cutoff=0.6
-        )
-    else:
-        moveset_matches = []
-
-    # If name_move is provided, find close matches in "name_move"
-    if param.name_move:
+        filtered_result = [item for item in data if item["moveset"] == notation_target]
+    elif param.name_move:
         name_move_target = param.name_move.title()
-        name_move_matches = get_close_matches(
-            name_move_target, [item["name_move"] for item in data], n=1, cutoff=0.6
+        name_filtered = get_close_matches(
+            name_move_target,
+            [item["name_move"] for item in data],
+            n=10,
+            cutoff=0.6,
         )
-    else:
-        name_move_matches = []
+        filtered_result = [item for item in data if item["name_move"] in name_filtered]
 
-    # Filter data based on closest matches found
-    filtered_result = [
-        item
-        for item in data
-        if (
-            (moveset_matches and item["moveset"] == moveset_matches[0])
-            or (name_move_matches and item["name_move"] == name_move_matches[0])
-        )
-    ]
-
-    # Return first match or an error if none found
+    # Return filtered results or an error if none found
     return (
         filtered_result
         if filtered_result
