@@ -1,4 +1,4 @@
-# Tekken 8 API v1.0.0
+# Tekken 8 API v1.0.1
 
 This API provides Tekken 8 move data and notation generation tools, sourced from WavuWiki. It includes features to retrieve and search movesets, and a notation maker that detects starter frames and generates button notation images.
 
