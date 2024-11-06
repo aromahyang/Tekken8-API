@@ -9,6 +9,8 @@ def convert_moveset(move: str):
     move = move.replace("WS", "ws")
     move = move.replace("ewgf", "f,n,d,df+2")
     move = move.replace("RA", "R.df+1+2")
+    move = move.replace("HS", "H.2+3")
+    move = move.replace("HB", "2+3")
     return move
 
 
