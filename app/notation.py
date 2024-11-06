@@ -41,10 +41,10 @@ def convert_notation(data: str) -> str:
 
 
 def draw_character_name(name: str) -> Image:
-    font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE")))
+    font = ImageFont.truetype("arial.ttf", int(os.getenv("CHAR_NAME_FONT_SIZE", 64)))
     raw_width = len(name) + 2
     img_size = (
-        int(os.getenv("CHAR_NAME_FONT_SIZE")) * raw_width,
+        int(os.getenv("CHAR_NAME_FONT_SIZE", 64)) * raw_width,
         font.getbbox(name)[3] - font.getbbox(name)[1] + 32,
     )
     im = Image.new("RGBA", img_size)
@@ -54,10 +54,12 @@ def draw_character_name(name: str) -> Image:
 
 
 def draw_stances(name: str) -> Image:
-    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")) - 4)
+    font = ImageFont.truetype(
+        "arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128)) - 4
+    )
     img_size = (
         int(font.getlength(" " + name + " ")),
-        int(os.getenv("NOTATION_FONT_SIZE")),
+        int(os.getenv("NOTATION_FONT_SIZE", 128)),
     )
     im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
@@ -79,9 +81,9 @@ def draw_stances(name: str) -> Image:
 
 
 def draw_starter_frame(frame_startup: str) -> Image:
-    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE")))
+    font = ImageFont.truetype("arial.ttf", int(os.getenv("NOTATION_FONT_SIZE", 128)))
     raw_width = int(font.getlength(frame_startup + "F "))
-    img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE")))
+    img_size = (raw_width, int(os.getenv("NOTATION_FONT_SIZE", 128)))
     im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
     d.text((0, 0), f"{frame_startup}F", fill="white", font=font)
@@ -90,7 +92,7 @@ def draw_starter_frame(frame_startup: str) -> Image:
 
 async def draw_notation(notation: list, data: Notation):
     images = []
-    width_limit = int(os.getenv("IMAGE_NOTATION_WIDTH_LIMIT"))
+    width_limit = int(os.getenv("IMAGE_NOTATION_WIDTH_LIMIT", 1600))
     current_x = 0
     current_y = 0
     max_height_in_row = 0

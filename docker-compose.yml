@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  fastapi-app:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - CHAR_NAME_FONT_SIZE=${CHAR_NAME_FONT_SIZE}
+      - NOTATION_FONT_SIZE=${NOTATION_FONT_SIZE}
+      - IMAGE_NOTATION_WIDTH_LIMIT=${IMAGE_NOTATION_WIDTH_LIMIT}

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from .model import Movetable, Findmove
+from difflib import get_close_matches
 import requests, re
 
 
@@ -13,22 +14,35 @@ def convert_moveset(move: str):
 
 async def finding_move(param: Findmove):
     data = await get_movetable(Findmove(character_name=param.character_name))
-    # Apply filters based on the existence of notation and movename parameters
+    # If notation is provided, find close matches in "moveset"
+    if param.notation:
+        notation_target = f"{param.character_name.title()}-{param.notation}"
+        moveset_matches = get_close_matches(
+            notation_target, [item["moveset"] for item in data], n=1, cutoff=0.6
+        )
+    else:
+        moveset_matches = []
+
+    # If name_move is provided, find close matches in "name_move"
+    if param.name_move:
+        name_move_target = param.name_move.title()
+        name_move_matches = get_close_matches(
+            name_move_target, [item["name_move"] for item in data], n=1, cutoff=0.6
+        )
+    else:
+        name_move_matches = []
+
+    # Filter data based on closest matches found
     filtered_result = [
         item
         for item in data
         if (
-            (
-                param.notation is None
-                or item["moveset"] == f"{param.character_name.title()}-{param.notation}"
-            )
-            and (
-                param.name_move is None or item["name_move"] == param.name_move.title()
-            )
+            (moveset_matches and item["moveset"] == moveset_matches[0])
+            or (name_move_matches and item["name_move"] == name_move_matches[0])
         )
     ]
 
-    # Return the first match if available, otherwise return an error message
+    # Return first match or an error if none found
     return (
         filtered_result
         if filtered_result
