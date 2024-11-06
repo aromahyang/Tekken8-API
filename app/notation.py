@@ -17,6 +17,7 @@ def convert_notation(data: str) -> str:
     data = data.replace("*", ",'hold',")
     data = data.replace("<", ",'delay1',")
     data = data.replace(">", ",'delay2',")
+    data = data.replace("WR", ",WR,")
     data = data.replace("WS", ",WS,")
     data = data.replace("~", ",~,")
     data = data.replace("[", "[,")
@@ -34,7 +35,7 @@ def convert_notation(data: str) -> str:
     data = data.replace("EWGF", "f,n,d,df,2")
     data = data.replace("HB", "2+3,^h")
     data = data.replace("HS", "^h,2+3")
-    data = data.replace("WR", "f,f,F")
+    # data = data.replace("WR", "f,f,F+")
 
     # Convert capital letters to the format ^lowercase
     data = re.sub(r"([A-Z])", lambda match: f"^{match.group(1).lower()}", data)

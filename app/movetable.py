@@ -6,6 +6,7 @@ import requests, re
 
 # Converting for searching moveset
 def convert_moveset(move: str):
+    move = move.replace("WR", "f,f,F+")
     move = move.replace("WS", "ws")
     move = move.replace("ewgf", "f,n,d,df+2")
     move = move.replace("RA", "R.df+1+2")
@@ -14,14 +15,87 @@ def convert_moveset(move: str):
     return move
 
 
-async def finding_move(param: Findmove):
+async def finding_similiar_move(param: Findmove):
+    # Makro for character name
+    if param.character_name == "DVJ" or param.character_name == "dvj":
+        param.character_name = "Devil Jin"
     data = await get_movetable(Findmove(character_name=param.character_name))
     param.notation = convert_moveset(param.notation)
 
+    if param.notation:
+        moveset_matches = get_close_matches(
+            param.notation,
+            [
+                item["moveset"].replace(f"{param.character_name.title()}-", "")
+                for item in data
+            ],
+            n=5,
+            cutoff=0.6,
+        )
+        filtered_result = [
+            item
+            for item in data
+            if item["moveset"].replace(f"{param.character_name.title()}-", "")
+            in moveset_matches
+        ]
+    elif param.name_move:
+        closest_name_move = get_close_matches(
+            param.name_move.title(),
+            [item["name_move"] for item in data],
+            n=5,
+            cutoff=0.6,
+        )
+        filtered_result = [
+            item for item in data if item["name_move"] in closest_name_move
+        ]
+    return (
+        filtered_result
+        if filtered_result
+        else {"error": "No matching moveset found", "param": param}
+    )
+
+
+async def finding_move(param: Findmove):
+    # Makro for character name
+    if param.character_name == "DVJ" or param.character_name == "dvj":
+        param.character_name = "Devil Jin"
+
+    data = await get_movetable(Findmove(character_name=param.character_name))
+    param.notation = convert_moveset(param.notation)
     # If notation is provided, perform an exact match on "moveset"
     if param.notation:
-        notation_target = f"{param.character_name.title()}-{param.notation}"
-        filtered_result = [item for item in data if item["moveset"] == notation_target]
+        if "stance" in param.notation:
+            # Get value inside parentheses in "stance(...)" and store that value
+            stance = re.search(r"\((.*?)\)", param.notation).group(1)
+            # Change text stance(...) in param.notation to variabel stance previously created
+            param.notation = param.notation.replace(f"stance({stance})", stance)
+
+            # Split converted_move with comma (,)
+            converted_moves = param.notation.split(",")
+            # And search the value in raw_data with conditions if len(converted_moves) == raw_data["moveset"]
+            filtered_result = [
+                item
+                for item in data
+                if all(
+                    move
+                    in item["moveset"]
+                    .replace(f"{param.character_name.title()}-", "")
+                    .split(",")
+                    and len(
+                        item["moveset"]
+                        .replace(f"{param.character_name.title()}-", "")
+                        .split(",")
+                    )
+                    == len(converted_moves)
+                    for move in converted_moves
+                )
+            ]
+        else:
+            target_moveset = f"{param.character_name.title()}-{param.notation}"
+            # Search value target in raw_data
+            filtered_result = [
+                item for item in data if item["moveset"] == target_moveset
+            ]
     elif param.name_move:
         name_move_target = param.name_move.title()
         name_filtered = get_close_matches(
@@ -36,7 +110,7 @@ async def finding_move(param: Findmove):
     return (
         filtered_result
         if filtered_result
-        else {"error": "No matching moveset found", "data": param}
+        else {"error": "No matching moveset found", "param": param}
     )
 
 
@@ -45,6 +119,7 @@ async def get_starter_frame(character_name: str, notation: str):
     if character_name == "DVJ" or character_name == "dvj":
         character_name = "Devil Jin"
 
+    notation = notation.replace(".", ",")
     raw_data = await get_movetable(Movetable(character_name=character_name))
     if "error" in raw_data:
         return raw_data

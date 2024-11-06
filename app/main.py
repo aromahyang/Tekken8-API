@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from .model import Notation, Movetable, Findmove
 from .notation import get_img_notation
-from .movetable import get_movetable, finding_move
+from .movetable import get_movetable, finding_move, finding_similiar_move
 import io
 
 app = FastAPI()
@@ -16,8 +16,15 @@ async def movetable(data: Movetable):
 
 @app.post("/findmove")
 async def findmove(data: Findmove):
-    result = await finding_move(data)
-    return {"total_data": len(result), "data": result}
+    main_result = await finding_move(data)
+    similiar = await finding_similiar_move(data)
+    return {
+        "total_data": (
+            len(main_result) if isinstance(main_result, list) else len(similiar)
+        ),
+        "data": main_result,
+        "similiar": similiar,
+    }
 
 
 @app.post("/notation")
