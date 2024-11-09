@@ -266,7 +266,19 @@ Start the server
   uvicorn app.main:app --reload
 ```
 
-### Shortcut setup and running
+## Shortcut run locally setup and running
+
+Clone the project
+
+```bash
+  git clone https://github.com/dammar01/Tekken8-API
+```
+
+Go to the project directory
+
+```bash
+  cd Tekken8-API
+```
 
 Setup
 
