@@ -1,4 +1,4 @@
-# Tekken 8 API v1.0.1
+# Tekken 8 API v1.0.2
 
 This API provides Tekken 8 move data and notation generation tools, sourced from WavuWiki. It includes features to retrieve and search movesets, and a notation maker that detects starter frames and generates button notation images.
 
@@ -93,18 +93,20 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `[`           | `[`            | `Optional start`                                         | ![ ](app/public/button/[.png)        |
 | `]`           | `]`            | `Optional end`                                           | ![ ](app/public/button/].png)        |
 
-| Raw notation | How to request | Description           |
-| :----------- | :------------- | :-------------------- |
-| `qcf`        | `qcf`          | `Same as d,df,f`      |
-| `qcb`        | `qcb`          | `Same as d,db,b`      |
-| `hcf`        | `hcf`          | `Same as b,db,d,df,f` |
-| `hcb`        | `hcb`          | `Same as f,df,d,db,b` |
-| `dp`         | `dp`           | `Same as f,d,df`      |
-| `RA`         | `RA`           | `Same as R`           |
-| `ewgf`       | `ewgf`         | `Same as f,n,d,df,2`  |
-| `EWGF`       | `EWGF`         | `Same as f,n,d,df,2`  |
-| `HB`         | `HB`           | `Same as 2+3,H`       |
-| `HS`         | `HS`           | `Same as H,2+3`       |
+| Raw notation  | How to request        | Description                                   |
+| :------------ | :-------------------- | :-------------------------------------------- |
+| `qcf`         | `qcf`                 | `Same as d,df,f`                              |
+| `qcb`         | `qcb`                 | `Same as d,db,b`                              |
+| `hcf`         | `hcf`                 | `Same as b,db,d,df,f`                         |
+| `hcb`         | `hcb`                 | `Same as f,df,d,db,b`                         |
+| `dp`          | `dp`                  | `Same as f,d,df`                              |
+| `RA`          | `RA`                  | `Same as R`                                   |
+| `ewgf`        | `ewgf`                | `Same as f,n,d,df,2`                          |
+| `EWGF`        | `EWGF`                | `Same as f,n,d,df,2`                          |
+| `HB`          | `HB`                  | `Same as 2+3,H`                               |
+| `HS`          | `HS`                  | `Same as H,2+3`                               |
+| `name_stance` | `stance(name_stance)` | `For using stance, use 'stance(name_stance)'` |
+| `STB`         | `stance(STB)`         | `e.g for using stance'`                       |
 
 #### Find moveset
 
@@ -275,13 +277,13 @@ Access server
 Start the server
 
 ```bash
-  docker pull dmmrs/tekken8-api:v1.0.1
+  docker pull dmmrs/tekken8-api:v1.0.2
 ```
 
 Run the server
 
 ```bash
-  docker run -d -p 8000:8000 dmmrs/tekken8-api:v1.0.1
+  docker run -d -p 8000:8000 dmmrs/tekken8-api:v1.0.2
 ```
 
 Access server
