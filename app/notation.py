@@ -80,7 +80,7 @@ def draw_character_name(name: str) -> Image:
     raw_width = len(name) + 2
     img_size = (
         int(os.getenv("CHAR_NAME_FONT_SIZE", 64)) * raw_width,
-        font.getbbox(name)[3] - font.getbbox(name)[1] + 32,
+        font.getbbox(name)[3] - font.getbbox(name)[1] + 28,
     )
     im = Image.new("RGBA", img_size)
     d = ImageDraw.Draw(im)
@@ -135,13 +135,13 @@ async def draw_notation(notation: list, data: Notation):
     max_height_in_row = 0
 
     moveset = await get_starter_frame(data.character_name, data.notation)
-    if "error" in moveset:
-        # Using ??F if starter frame not found
-        starter_frame = "??"
-    else:
-        # Using starter frame that found
-        frame = re.findall(r"\d+", moveset[0]["startup"])
-        starter_frame = f"{frame[0]}~{frame[1]}" if len(frame) > 1 else frame[0]
+    moveset = await get_starter_frame(data.character_name, data.notation)
+    starter_frame = (
+        "??"
+        if "error" in moveset
+        else f"{'~'.join(re.findall(r'\d+', moveset[0]['startup'])[:2]) or '??'}"
+    )
+
     img_frame = draw_starter_frame(starter_frame)
     images.append((img_frame, (current_x, current_y)))
     current_x += img_frame.width
@@ -206,15 +206,12 @@ async def get_img_notation(data: Notation):
         "RGBA",
         (
             img_notation.width,
-            img_notation.height
-            + img_chara_name.height
-            + (img_latest.height + p * 4)
-            + p,
+            img_notation.height + img_chara_name.height + img_latest.height + p * 3,
         ),
     )
     results.paste(img_chara_name, (0, 0))
     results.paste(img_notation, (0, img_chara_name.height + p))
     results.paste(
-        img_latest, (0, (img_notation.height + img_chara_name.height + p * 2) + p)
+        img_latest, (0, (img_notation.height + img_chara_name.height) + p * 3)
     )
     return results

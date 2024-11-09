@@ -103,8 +103,8 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `RA`          | `RA`                  | `Same as R`                                   |
 | `ewgf`        | `ewgf`                | `Same as f,n,d,df,2`                          |
 | `EWGF`        | `EWGF`                | `Same as f,n,d,df,2`                          |
-| `HB`          | `HB`                  | `Same as 2+3,H`                               |
-| `HS`          | `HS`                  | `Same as H,2+3`                               |
+| `Heat Burst`  | `HB`                  | `Same as 2+3,H`                               |
+| `Heat Smash`  | `HS`                  | `Same as H,2+3`                               |
 | `name_stance` | `stance(name_stance)` | `For using stance, use 'stance(name_stance)'` |
 | `STB`         | `stance(STB)`         | `e.g for using stance'`                       |
 

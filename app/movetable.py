@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 from .model import Movetable, Findmove
 from difflib import get_close_matches
-import requests, re
+import requests, re, random, time
 
 
 # Converting for searching moveset
@@ -187,6 +187,10 @@ async def get_version():
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
+    sleep_time_ms = random.randint(100, 300)
+    sleep_time_sec = sleep_time_ms / 1000.0
+    time.sleep(sleep_time_sec)
+
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, "html.parser")
