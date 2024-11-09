@@ -266,7 +266,7 @@ Start the server
   uvicorn app.main:app --reload
 ```
 
-## Shortcut run locally setup and running
+## Shortcut run and setup locally
 
 Clone the project
 
