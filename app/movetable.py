@@ -182,6 +182,21 @@ async def get_starter_frame(character_name: str, notation: str):
     )
 
 
+async def get_version():
+    url = f"https://wavu.wiki/t/Main_Page"
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, "html.parser")
+        raw = soup.find(class_="floatright")
+        result = [data for data in raw.get_text().split("\n") if "Version" in data]
+        return result
+    else:
+        return {"error": "error while getting version"}
+
+
 async def get_movetable(data: Movetable):
     # Makro for character name
     if data.character_name == "DVJ" or data.character_name == "dvj":

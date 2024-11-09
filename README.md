@@ -1,4 +1,4 @@
-# Tekken 8 API v1.0.2
+# Tekken 8 API v1.0.3
 
 This API provides Tekken 8 move data and notation generation tools, sourced from WavuWiki. It includes features to retrieve and search movesets, and a notation maker that detects starter frames and generates button notation images.
 
@@ -45,6 +45,7 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `ub`          | `ub`           | `Up and backward`                                        | ![ ](app/public/button/ub.png)       |
 | `UB`          | `UB`           | `Up and backward (Hold)`                                 | ![ ](app/public/button/^u^b.png)     |
 | `uf`          | `uf`           | `Up and forward`                                         | ![ ](app/public/button/uf.png)       |
+| `UF`          | `UF`           | `Up and forward (Hold)`                                  | ![ ](app/public/button/^u^f.png)     |
 | `d`           | `d`            | `Down`                                                   | ![ ](app/public/button/d.png)        |
 | `D`           | `D`            | `Down (hold)`                                            | ![ ](app/public/button/^d.png)       |
 | `db`          | `db`           | `Down and backward`                                      | ![ ](app/public/button/db.png)       |
@@ -70,7 +71,6 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 | `SWL`         | `SWL`          | `Side Walk Left`                                         | ![ ](app/public/button/^s^w^l.png)   |
 | `SWR`         | `SWR`          | `Side Walk Right`                                        | ![ ](app/public/button/^s^w^r.png)   |
 | `T!`          | `T!`           | `Tornado`                                                | ![ ](app/public/button/^t!.png)      |
-| `UF`          | `UF`           | `Up and forward (Hold)`                                  | ![ ](app/public/button/^u^f.png)     |
 | `W!`          | `W!`           | `Wall Splat, Wall Bounce`                                | ![ ](app/public/button/^w!.png)      |
 | `WB!`         | `WB!`          | `Wall Break`                                             | ![ ](app/public/button/^w^b!.png)    |
 | `WBl!`        | `WBl!`         | `Wall Blast`                                             | ![ ](app/public/button/^w^bl!.png)   |
@@ -266,6 +266,20 @@ Start the server
   uvicorn app.main:app --reload
 ```
 
+### Shortcut setup and running
+
+Setup
+
+```bash
+  ./setup.sh
+```
+
+Start the server
+
+```bash
+  ./run.sh
+```
+
 Access server
 
 ```bash
@@ -277,13 +291,13 @@ Access server
 Start the server
 
 ```bash
-  docker pull dmmrs/tekken8-api:v1.0.2
+  docker pull dmmrs/tekken8-api:v1.0.3
 ```
 
 Run the server
 
 ```bash
-  docker run -d -p 8000:8000 dmmrs/tekken8-api:v1.0.2
+  docker run -d -p 8000:8000 dmmrs/tekken8-api:v1.0.3
 ```
 
 Access server

@@ -1,7 +1,7 @@
 from PIL import Image, ImageFont, ImageDraw
 from dotenv import load_dotenv
 from .model import Notation
-from .movetable import get_starter_frame
+from .movetable import get_starter_frame, get_version
 import re, os
 
 load_dotenv()
@@ -42,6 +42,35 @@ def convert_notation(data: str) -> str:
     # Convert plus symbol (+) to comma (,)
     data = re.sub(r"([a-zA-Z]+)\+(\d+)", r"\1,\2", data)
     return data
+
+
+async def draw_latest_version():
+    ver = await get_version()
+    latest = ver[0].replace("Version ", "v")
+    font = ImageFont.truetype(
+        "./public/arial.ttf", (int(os.getenv("CHAR_NAME_FONT_SIZE", 64)) // 2) - 4
+    )
+    img_size = (
+        int(font.getlength(" " + latest + " ")),
+        (int(os.getenv("CHAR_NAME_FONT_SIZE", 64)) // 2),
+    )
+    im = Image.new("RGBA", img_size)
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle(
+        [0, 0, im.width, im.height],
+        radius=5,
+        fill=(251, 59, 87, 255),
+        outline=(251, 59, 87, 255),
+    )
+    d.text(
+        (0, 0),
+        f" {latest} ",
+        fill="white",
+        font=font,
+        align="center",
+    )
+
+    return im
 
 
 def draw_character_name(name: str) -> Image:
@@ -172,13 +201,20 @@ async def get_img_notation(data: Notation):
 
     p = 5
     img_chara_name = draw_character_name(data.character_name)
+    img_latest = await draw_latest_version()
     results = Image.new(
         "RGBA",
         (
             img_notation.width,
-            img_notation.height + img_chara_name.height + p,
+            img_notation.height
+            + img_chara_name.height
+            + (img_latest.height + p * 4)
+            + p,
         ),
     )
     results.paste(img_chara_name, (0, 0))
     results.paste(img_notation, (0, img_chara_name.height + p))
+    results.paste(
+        img_latest, (0, (img_notation.height + img_chara_name.height + p * 2) + p)
+    )
     return results
