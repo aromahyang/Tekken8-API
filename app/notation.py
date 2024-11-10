@@ -134,17 +134,17 @@ async def draw_notation(notation: list, data: Notation):
     current_y = 0
     max_height_in_row = 0
 
-    moveset = await get_starter_frame(data.character_name, data.notation)
-    moveset = await get_starter_frame(data.character_name, data.notation)
-    starter_frame = (
-        "??"
-        if "error" in moveset
-        else f"{'~'.join(re.findall(r'\d+', moveset[0]['startup'])[:2]) or '??'}"
-    )
+    if data.draw_starter_frame:
+        moveset = await get_starter_frame(data.character_name, data.notation)
+        starter_frame = (
+            "??"
+            if "error" in moveset
+            else f"{'~'.join(re.findall(r'\d+', moveset[0]['startup'])[:2]) or '??'}"
+        )
 
-    img_frame = draw_starter_frame(starter_frame)
-    images.append((img_frame, (current_x, current_y)))
-    current_x += img_frame.width
+        img_frame = draw_starter_frame(starter_frame)
+        images.append((img_frame, (current_x, current_y)))
+        current_x += img_frame.width
 
     for raw in notation:
         if raw != "":

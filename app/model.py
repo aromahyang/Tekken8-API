@@ -4,6 +4,7 @@ from pydantic import BaseModel
 class Notation(BaseModel):
     character_name: str
     notation: str
+    draw_starter_frame: bool | None = True
 
 
 class Movetable(BaseModel):
