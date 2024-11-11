@@ -139,12 +139,25 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
 POST /notation
 {
     "character_name": "lee",
-    "notation": "b,B+4 dash b,3,3 f,4:1 b,1:1+2"
+    "notation": "b,B+4 dash b,3,3 f,4:1 b,1:1+2",
+    "starter_frame": true
 }
 ```
 
 Output will be:
 ![Notation Maker Example](app/public/example/response.png)
+
+```json
+POST /notation
+{
+    "character_name": "lee",
+    "notation": "b,B+4 dash b,3,3 f,4:1 b,1:1+2",
+    "starter_frame": false
+}
+```
+
+Output will be:
+![Notation Maker Example](app/public/example/response2.png)
 
 #### Get movetable:
 
