@@ -2,10 +2,16 @@ from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
 from .model import Notation, Movetable, Findmove
 from .notation import get_img_notation
-from .movetable import get_movetable, finding_move, finding_similiar_move
+from .movetable import get_movetable, finding_move, finding_similiar_move, get_version
 import io
 
 app = FastAPI()
+
+
+@app.get("/")
+async def movetable():
+    result = await get_version()
+    return {"detail": "Using" + result[0]} if "error" not in result else result
 
 
 @app.post("/movetable")
