@@ -16,10 +16,11 @@ This API provides Tekken 8 move data and notation generation tools, sourced from
   POST /notation
 ```
 
-| Parameter        | Type     | Description                  |
-| :--------------- | :------- | :--------------------------- |
-| `character_name` | `string` | \*Character Name of Tekken 8 |
-| `notation`       | `string` | \*Your notation              |
+| Parameter            | Type     | Description                             |
+| :------------------- | :------- | :-------------------------------------- |
+| `character_name`     | `string` | \*Character Name of Tekken 8            |
+| `notation`           | `string` | \*Your notation                         |
+| `draw_starter_frame` | `bool`   | Drawing starter frame (default is true) |
 
 ##### Notation reference
 
