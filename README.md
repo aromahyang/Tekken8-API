@@ -2,6 +2,12 @@
 
 This API provides Tekken 8 move data and notation generation tools, sourced from WavuWiki. It includes features to retrieve and search movesets, and a notation maker that detects starter frames and generates button notation images.
 
+# Disclaimer
+
+This application is not affiliated with, endorsed, sponsored, or specifically approved by Bandai Namco Entertainment Inc., the creators and publishers of the Tekken series. Tekken8-API are fan-made projects created for informational and entertainment purposes only. All game-related content, data, and assets are the property of their respective owners.
+
+These tools do not provide official data from Bandai Namco and are not intended to infringe on any copyrights or trademarks. Any use of these applications is at the user’s own discretion, and we do not guarantee the accuracy or completeness of any game-related information provided.
+
 # Features
 
 - **Notation Maker**: Detects the starter frame for any move and creates images with the button notation.
