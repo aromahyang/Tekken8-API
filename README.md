@@ -272,6 +272,9 @@ Activate venv
 
 ```bash
   venv\Scripts\activate
+
+  # mac
+  source venv/bin/activate
 ```
 
 Install dependencies
